@@ -1,13 +1,16 @@
 import BookCard from "@/components/BookCard";
 import HeroSection from "@/components/HeroSection";
-import { sampleBooks } from "@/lib/constants";
+import { getAllBooks } from "@/lib/actions/book.actions";
 
-export default function page() {
+
+export default async function page() {
+  const bookResults = await getAllBooks()
+   const books = bookResults.success ? bookResults.data ?? [] : []
   return (
     <div>
       <HeroSection />
       <div className="flex max-w-350 mx-auto flex-wrap justify-center gap-6">
-        {sampleBooks.map((book) => (
+        {books.map((book:any) => (
           <BookCard
             key={book._id}
             title={book.title}

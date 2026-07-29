@@ -87,7 +87,36 @@ const UploadForm = () => {
          contentType: "application/pdf",
        });
 
-       let coverUrl: string = "";
+       let coverUrl: string;
+
+        if (data.coverImage) {
+          const coverFile = data.coverImage;
+          const uploadedCoverBlob = await upload(
+            `${fileTitle}_cover.png`,
+            coverFile,
+            {
+              access: "public",
+              handleUploadUrl: "/api/upload",
+              contentType: coverFile.type,
+            },
+          );
+          coverUrl = uploadedCoverBlob.url;
+        } else {
+          const response = await fetch(parsedPDF.cover);
+          const blob = await response.blob();
+
+          const uploadedCoverBlob = await upload(
+            `${fileTitle}_cover.png`,
+            blob,
+            {
+              access: "public",
+              handleUploadUrl: "/api/upload",
+              contentType: "image/png",
+            },
+          );
+          coverUrl = uploadedCoverBlob.url;
+        }
+
 
          const book = await createBook({
            clerkId: userId,
@@ -228,7 +257,7 @@ const UploadForm = () => {
             />
             <Button
               type="submit"
-              className="w-full h-14 text-lg font-semibold rounded-xl bg-[#663820] hover:bg-[#522c19] text-white transition-all duration-200 shadow-md hover:shadow-lg mt-8"
+              className="w-full h-14 text-lg font-semibold rounded-xl bg-[#CCE5F2] hover:bg-transparent border hover:border-[#CCE5F2] text-black transition-all duration-200 shadow-md hover:shadow-lg mt-8"
               disabled={isSubmitting}>
               Begin Synthesis
             </Button>
