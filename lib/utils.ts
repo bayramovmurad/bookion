@@ -147,7 +147,7 @@ export async function parsePDFFile(file: File) {
     const segments = splitIntoSegments(fullText);
 
     // Clean up PDF document resources
-    await (pdfDocument as any).destroy();
+    await pdfDocument.cleanup();
 
     return {
       content: segments,
