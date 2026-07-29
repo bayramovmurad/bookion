@@ -24,8 +24,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body
-          className={`${roboto.variable} antialiased`}>
+        <body className={`${roboto.variable} antialiased bg-[#CCE5F2]`}>
           <Navbar />
           {children}
         </body>
