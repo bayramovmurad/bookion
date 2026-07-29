@@ -24,10 +24,18 @@ import {
 import FileUploader from "./FileUploader";
 import VoiceSelector from "./VoiceSelector";
 import LoadingOverlay from "./LoadingOverlay";
+import { useAuth } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { checkBookExists, createBook, saveBookSegments } from "@/lib/actions/book.actions";
+import { parsePDFFile } from "@/lib/utils";
+import { upload } from "@vercel/blob/client";
+import { useRouter } from "next/navigation";
 
 const UploadForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { userId } = useAuth();
+    const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -38,13 +46,91 @@ const UploadForm = () => {
     defaultValues: {
       title: "",
       author: "",
-      voice: DEFAULT_VOICE,
+      persona: "",
+      pdfFile: undefined,
+      coverImage: undefined,
     },
   });
 
-  const onSubmit = async (values: BookUploadFormValues) => {
+  const onSubmit = async (data: BookUploadFormValues) => {
+    if (!userId) {
+      return toast.error("Please login to upload bookd");
+    }
+
     setIsSubmitting(true);
-    console.log(values);
+
+    try {
+       const existsCheck = await checkBookExists(data.title);
+
+       if (existsCheck.exists && existsCheck.book) {
+         toast.info("Book with same title already exists.");
+         form.reset();
+         router.push(`/books/${existsCheck.book.slug}`);
+         return;
+       }
+
+       const fileTitle = data.title.replace(/\s+/g, "-").toLowerCase();
+       const pdfFile = data.pdfFile;
+
+       const parsedPDF = await parsePDFFile(pdfFile);
+
+       if (parsedPDF.content.length === 0) {
+         toast.error(
+           "Failed to parse PDF. Please try again with a different file.",
+         );
+         return;
+       }
+
+       const uploadedPdfBlob = await upload(fileTitle, pdfFile, {
+         access: "public",
+         handleUploadUrl: "/api/upload",
+         contentType: "application/pdf",
+       });
+
+       let coverUrl: string = "";
+
+         const book = await createBook({
+           clerkId: userId,
+           title: data.title,
+           author: data.author,
+           persona: data.persona,
+           fileURL: uploadedPdfBlob.url,
+           fileBlobKey: uploadedPdfBlob.pathname,
+           coverURL: coverUrl,
+           fileSize: pdfFile.size,
+         });
+
+         if (!book.success) throw new Error("Failed to create book");
+
+         if (book.alreadyExists) {
+           toast.info("Book with same title already exists.");
+           form.reset();
+           router.push(`/books/${existsCheck.book.slug}`);
+           return;
+         }
+ 
+         const segments = await saveBookSegments(
+           book.data._id,
+           userId,
+           parsedPDF.content,
+         );
+
+         if (!segments.success) {
+           toast.error("Failed to save book segments");
+           throw new Error("Failed to save book segments");
+         }
+
+         form.reset();
+         router.push("/");
+
+    } catch (error) {
+      console.error(error)
+    }finally{
+      setIsSubmitting(false);
+    }
+
+    setIsSubmitting(true);
+    console.log(data);
     // Simulate submission
     await new Promise((resolve) => setTimeout(resolve, 3000));
     setIsSubmitting(false);
@@ -60,7 +146,7 @@ const UploadForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FileUploader
               control={form.control}
-              name="bookFile"
+              name="pdfFile"
               label="Book PDF File"
               acceptTypes={ACCEPTED_PDF_TYPES}
               icon={Upload}
@@ -123,7 +209,7 @@ const UploadForm = () => {
             </div>
             <FormField
               control={form.control}
-              name="voice"
+              name="persona"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base font-semibold text-[#212a3b]">

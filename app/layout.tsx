@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 const roboto = Roboto({
   weight: ['400', '500', '600', '700'],
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={`${roboto.variable} antialiased bg-[#CCE5F2]`}>
           <Navbar />
           {children}
+          <Toaster/>
         </body>
       </html>
     </ClerkProvider>
