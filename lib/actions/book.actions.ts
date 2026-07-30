@@ -7,6 +7,7 @@ import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { getUserPlan } from "../subscription-server";
 
 
 export const getAllBooks = async (search?: string) => {
@@ -82,11 +83,26 @@ export const createBook = async (data: CreateBook) => {
             }
         }
 
-        // Todo: Check subscription limits before creating a book
+        const { getUserPlan } = await import("../subscription-server");
+        const { PLAN_LIMITS } = await import("@/lib/subscription-constants");
+
+        const plan = await getUserPlan();
+        const limits = PLAN_LIMITS[plan];
+
+        const bookCount = await Book.countDocuments({ clerkId: data.clerkId });
+
+        if (bookCount >= limits.maxBooks) {
+            const { revalidatePath } = await import("next/cache");
+            revalidatePath("/");
+
+            return {
+                success: false,
+                error: `You have reached the maximum number of books allowed for your ${plan} plan (${limits.maxBooks}). Please upgrade to add more books.`,
+                isBillingError: true,
+            };
+        }
 
         
-
-
 
         const book = await Book.create({ ...data, slug, totalSegments: 0 });
 

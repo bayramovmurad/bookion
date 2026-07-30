@@ -13,7 +13,7 @@ const roboto = Roboto({
 
 
 export const metadata: Metadata = {
-  title: "Bookio",
+  title: "Bookion",
   description: "Turn your books into interactive AI companions. Upload PDFs and talk to your books using your voice.",
 };
 

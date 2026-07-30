@@ -7,7 +7,7 @@ const Page = () => {
         <h1 className="text-4xl md:text-5xl font-semibold text-black tracking-[-0.02em] leading-13.5 font-serif;">
           Add a New Book
         </h1>
-        <p className="text-primary leading-7">
+        <p className="text-primary leading-7 mb-4">
           Upload a PDF to generate your interactive reading experience
         </p>
       </section>

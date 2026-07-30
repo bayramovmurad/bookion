@@ -6,7 +6,9 @@ import { IBook } from "@/types";
 import Image from "next/image";
 import Transcript from "@/components/Transcript";
 import { toast } from "sonner";
+
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const VapiControls = ({ book }: { book: IBook }) => {
   const {
@@ -18,8 +20,24 @@ const VapiControls = ({ book }: { book: IBook }) => {
     duration,
     start,
     stop,
+    clearError,
+    limitError,
+    isBillingError,
+    maxDurationSeconds,
   } = useVapi(book);
   const router = useRouter();
+
+  useEffect(() => {
+    if (limitError) {
+      toast.error(limitError);
+      if (isBillingError) {
+        router.push("/subscriptions");
+      } else {
+        router.push("/");
+      }
+      clearError();
+    }
+  }, [isBillingError, limitError, router, clearError]);
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -48,14 +66,16 @@ const VapiControls = ({ book }: { book: IBook }) => {
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 p-4">
+      {/* Header Card */}
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 p-6 sm:p-8 bg-white rounded-3xl shadow-sm border border-gray-100">
+        {/* Cover & Mic Section */}
         <div className="relative shrink-0">
           <Image
             src={book.coverURL || "/images/book-placeholder.png"}
             alt={book.title}
             width={120}
             height={180}
-            className="w-30 h-30 object-cover rounded-xl shadow-md bg-gray-100"
+            className="w-[120px] h-[180px] object-cover rounded-xl shadow-md bg-gray-100"
             priority
           />
 
@@ -80,7 +100,7 @@ const VapiControls = ({ book }: { book: IBook }) => {
           </div>
         </div>
 
-        {/* info */}
+        {/* Book Info & Status Section */}
         <div className="flex flex-col gap-4 flex-1 text-center sm:text-left mt-4 sm:mt-0">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#212a3b] mb-1 line-clamp-2">
@@ -102,24 +122,25 @@ const VapiControls = ({ book }: { book: IBook }) => {
               </span>
             </div>
 
-            {/* Voice */}
+            {/* Voice Pill */}
             <div className="flex items-center px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-full">
               <span className="text-sm font-medium text-[#212a3b]">
                 Voice: {book.persona || "Daniel"}
               </span>
             </div>
 
-            {/* Duration */}
+            {/* Duration Pill */}
             <div className="flex items-center px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-full">
               <span className="text-sm font-medium text-[#212a3b] tracking-wide">
-                {formatDuration(duration)} / 15:00
+                {formatDuration(duration)} /{" "}
+                {formatDuration(maxDurationSeconds)}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Transcript */}
+      {/* Transcript Section */}
       <div className="flex flex-col bg-white rounded-3xl p-2 sm:p-4 shadow-sm border border-gray-100 overflow-hidden min-h-[400px] h-[60vh] max-h-[600px]">
         <Transcript
           messages={messages}

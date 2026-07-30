@@ -30,7 +30,7 @@ export default async function BookDetailsPage({
   return (
     <div className="book-page-container max-w-7xl mx-auto">
       <Link href="/" className="back-btn-floating">
-        <ArrowLeft className="size-6 text-[#212a3b]" />
+        <ArrowLeft className="size-6 mt-4 text-[#212a3b]" />
       </Link>
 
       <VapiControls book={book} />

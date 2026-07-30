@@ -9,7 +9,7 @@ export type PlanType = typeof PLANS[keyof typeof PLANS];
 export interface PlanLimits {
     maxBooks: number;
     maxSessionsPerMonth: number;
-    maxDurationPerSession: number;
+    maxDurationPerSession: number; // in minutes
     hasSessionHistory: boolean;
 }
 
