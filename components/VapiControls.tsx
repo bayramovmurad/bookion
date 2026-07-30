@@ -18,7 +18,6 @@ const VapiControls = ({ book }: { book: IBook }) => {
     duration,
     start,
     stop,
-    clearError,
   } = useVapi(book);
   const router = useRouter();
 
