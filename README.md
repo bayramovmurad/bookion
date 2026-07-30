@@ -1,4 +1,4 @@
-# 📚 Bookio - AI Voice Book Companion
+# 📚 Bookion - AI Voice Book Companion
 
 > An AI-powered, full-stack book assistant built with Next.js and Vapi to provide interactive, voice-driven book experiences.
 
@@ -7,7 +7,7 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white)
 
-Bookio is a modern, full-stack web application that allows users to upload PDF books and interact with them using advanced Voice AI (powered by Vapi). It features secure authentication, subscription-based access, and a highly responsive, modern user interface.
+Bookion is a modern, full-stack web application that allows users to upload PDF books and interact with them using advanced Voice AI (powered by Vapi). It features secure authentication, subscription-based access, and a highly responsive, modern user interface.
 
 ## ✨ Key Features
 
