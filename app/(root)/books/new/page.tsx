@@ -2,17 +2,25 @@ import UploadForm from "@/components/UploadForm";
 
 const Page = () => {
   return (
-    <main className="wrapper container mx-auto">
-      <section className="flex flex-col gap-5 text-center">
-        <h1 className="text-4xl md:text-5xl font-semibold text-black tracking-[-0.02em] leading-13.5 font-serif;">
-          Add a New Book
-        </h1>
-        <p className="text-primary leading-7 mb-4">
-          Upload a PDF to generate your interactive reading experience
-        </p>
-      </section>
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(214,180,122,0.08),transparent_18%),linear-gradient(180deg,#0A0F1C_0%,#0B1120_100%)] text-[#F5EFE6]">
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <section className="mb-10 flex flex-col items-center text-center">
+          <p className="mb-3 text-[11px] uppercase tracking-[0.30em] text-[#D6B47A]">
+            Create your collection
+          </p>
 
-      <UploadForm />
+          <h1 className="max-w-3xl text-4xl font-serif font-semibold leading-[1.05] text-[#F8F3EA] md:text-5xl lg:text-6xl">
+            Add a new book to your private AI library
+          </h1>
+
+          <p className="mt-5 max-w-2xl text-sm leading-7 text-[#98A3B6] md:text-base">
+            Upload a PDF, choose a cover, and shape a richer reading experience
+            with voice and AI conversation.
+          </p>
+        </section>
+
+        <UploadForm />
+      </div>
     </main>
   );
 };

@@ -35,13 +35,21 @@ const Transcript = ({
 
   if (isEmpty) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center p-8 opacity-80">
-        <Mic className="size-12 text-[#212a3b] mb-4 opacity-60" />
-        <h2 className="text-xl font-bold text-[#212a3b]">
+      <div className="flex min-h-[320px] h-full flex-col items-center justify-center rounded-[28px] border border-white/8 bg-white/[0.025] p-8 text-center">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#D6B47A]/20 bg-[#D6B47A]/10">
+          <Mic className="size-7 text-[#E7D3A7]" />
+        </div>
+
+        <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-[#D6B47A]">
+          Voice conversation
+        </p>
+
+        <h2 className="text-2xl font-serif font-semibold text-[#F8F3EA]">
           No conversation yet
         </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          Click the mic button above to start talking
+
+        <p className="mt-3 max-w-sm text-sm leading-7 text-[#95A0B2]">
+          Start speaking to begin an intelligent conversation with your book.
         </p>
       </div>
     );
@@ -50,7 +58,7 @@ const Transcript = ({
   return (
     <div
       ref={scrollRef}
-      className="flex flex-col gap-4 overflow-y-auto pr-2 flex-1 w-full p-2 md:p-4">
+      className="flex w-full flex-1 flex-col gap-4 overflow-y-auto p-2 pr-2 md:p-4">
       {messages.map((message, index) => (
         <div
           key={index}
@@ -58,28 +66,30 @@ const Transcript = ({
             message.role === "user" ? "justify-end" : "justify-start"
           }`}>
           <div
-            className={`relative max-w-[85%] md:max-w-[75%] px-5 py-3 text-sm md:text-base leading-relaxed rounded-2xl shadow-sm ${
+            className={`relative max-w-[88%] rounded-[22px] px-5 py-3.5 text-sm leading-7 shadow-[0_10px_30px_rgba(0,0,0,0.14)] md:max-w-[74%] md:text-base ${
               message.role === "user"
-                ? "bg-[#212a3b] text-white rounded-br-sm" // İstifadəçi mesajı (Tünd)
-                : "bg-gray-100 border border-gray-200 text-[#212a3b] rounded-bl-sm" // Assistant mesajı (Açıq)
+                ? "rounded-br-md border border-[#D6B47A]/15 bg-[linear-gradient(180deg,rgba(214,180,122,0.16),rgba(214,180,122,0.08))] text-[#F8F3EA]"
+                : "rounded-bl-md border border-white/10 bg-white/[0.05] text-[#DCE3EF]"
             }`}>
             {message.content}
           </div>
         </div>
       ))}
+
       {currentUserMessage && (
         <div className="flex w-full justify-end">
-          <div className="relative max-w-[85%] md:max-w-[75%] px-5 py-3 text-sm md:text-base leading-relaxed rounded-2xl shadow-sm bg-[#212a3b] text-white rounded-br-sm">
+          <div className="relative max-w-[88%] rounded-[22px] rounded-br-md border border-[#D6B47A]/15 bg-[linear-gradient(180deg,rgba(214,180,122,0.16),rgba(214,180,122,0.08))] px-5 py-3.5 text-sm leading-7 text-[#F8F3EA] shadow-[0_10px_30px_rgba(0,0,0,0.14)] md:max-w-[74%] md:text-base">
             {currentUserMessage}
-            <span className="inline-block w-1 h-4 ml-1.5 bg-white animate-pulse align-middle" />
+            <span className="ml-1.5 inline-block h-4 w-1 animate-pulse rounded-full bg-[#F8F3EA] align-middle" />
           </div>
         </div>
       )}
+
       {currentMessage && (
         <div className="flex w-full justify-start">
-          <div className="relative max-w-[85%] md:max-w-[75%] px-5 py-3 text-sm md:text-base leading-relaxed rounded-2xl shadow-sm bg-gray-100 border border-gray-200 text-[#212a3b] rounded-bl-sm">
+          <div className="relative max-w-[88%] rounded-[22px] rounded-bl-md border border-white/10 bg-white/[0.05] px-5 py-3.5 text-sm leading-7 text-[#DCE3EF] shadow-[0_10px_30px_rgba(0,0,0,0.14)] md:max-w-[74%] md:text-base">
             {currentMessage}
-            <span className="inline-block w-1 h-4 ml-1.5 bg-[#212a3b] animate-pulse align-middle" />
+            <span className="ml-1.5 inline-block h-4 w-1 animate-pulse rounded-full bg-[#D6B47A] align-middle" />
           </div>
         </div>
       )}

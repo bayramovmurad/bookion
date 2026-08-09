@@ -16,11 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  ACCEPTED_PDF_TYPES,
-  ACCEPTED_IMAGE_TYPES,
-  DEFAULT_VOICE,
-} from "@/lib/constants";
+import { ACCEPTED_PDF_TYPES, ACCEPTED_IMAGE_TYPES } from "@/lib/constants";
 import FileUploader from "./FileUploader";
 import VoiceSelector from "./VoiceSelector";
 import LoadingOverlay from "./LoadingOverlay";
@@ -62,8 +58,6 @@ const UploadForm = () => {
     }
 
     setIsSubmitting(true);
-
-    // PostHog -> Track Book Uploads...
 
     try {
       const existsCheck = await checkBookExists(data.title);
@@ -172,52 +166,92 @@ const UploadForm = () => {
     <>
       {isSubmitting && <LoadingOverlay />}
 
-      <div className="mx-2 max-w-7xl md:mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-gray-100 mb-16">
+      <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.025))] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-8 md:p-10">
+        <div className="absolute left-[-30px] top-[-40px] h-44 w-44 rounded-full bg-[#D6B47A]/10 blur-3xl" />
+        <div className="absolute right-[-40px] bottom-[-50px] h-52 w-52 rounded-full bg-[#7C8DB5]/10 blur-3xl" />
+
+        <div className="relative mb-8 grid gap-4 rounded-[28px] border border-white/8 bg-white/[0.025] p-5 md:grid-cols-3">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#D6B47A]">
+              Step 1
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-[#F8F3EA]">
+              Upload your file
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-[#95A0B2]">
+              Add the PDF and optional cover image.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#D6B47A]">
+              Step 2
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-[#F8F3EA]">
+              Describe the book
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-[#95A0B2]">
+              Add title, author, and voice persona.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#D6B47A]">
+              Step 3
+            </p>
+            <h3 className="mt-2 text-sm font-semibold text-[#F8F3EA]">
+              Start synthesis
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-[#95A0B2]">
+              The book is processed into an AI experience.
+            </p>
+          </div>
+        </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {/* 1. PDF File Upload */}
-            <FileUploader
-              control={form.control}
-              name="pdfFile"
-              label="Book PDF File"
-              acceptTypes={ACCEPTED_PDF_TYPES}
-              icon={Upload}
-              placeholder="Click to upload PDF"
-              hint="PDF file (max 50MB)"
-              disabled={isSubmitting}
-            />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <FileUploader
+                control={form.control}
+                name="pdfFile"
+                label="Book PDF File"
+                acceptTypes={ACCEPTED_PDF_TYPES}
+                icon={Upload}
+                placeholder="Upload the PDF"
+                hint="PDF file, up to 50MB"
+                disabled={isSubmitting}
+              />
 
-            {/* 2. Cover Image Upload */}
-            <FileUploader
-              control={form.control}
-              name="coverImage"
-              label="Cover Image (Optional)"
-              acceptTypes={ACCEPTED_IMAGE_TYPES}
-              icon={ImageIcon}
-              placeholder="Click to upload cover image"
-              hint="Leave empty to auto-generate from PDF"
-              disabled={isSubmitting}
-            />
+              <FileUploader
+                control={form.control}
+                name="coverImage"
+                label="Cover Image"
+                acceptTypes={ACCEPTED_IMAGE_TYPES}
+                icon={ImageIcon}
+                placeholder="Upload a custom cover"
+                hint="Optional — otherwise a cover will be generated"
+                disabled={isSubmitting}
+              />
+            </div>
 
-            {/* 3 & 4. Title and Author Inputs (Grid Layout) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base font-semibold text-[#212a3b]">
+                    <FormLabel className="mb-2 text-sm font-medium tracking-[0.02em] text-[#EAE3D7]">
                       Title
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 px-4 text-base focus-visible:ring-2 focus-visible:ring-[#212a3b] transition-all"
-                        placeholder="ex: Rich Dad Poor Dad"
+                        className="h-14 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-base text-[#F8F3EA] placeholder:text-[#7F8A9D] shadow-none transition focus-visible:ring-0 focus-visible:border-[#D6B47A]/35"
+                        placeholder="Rich Dad Poor Dad"
                         {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-500 text-sm" />
+                    <FormMessage className="text-sm text-red-400" />
                   </FormItem>
                 )}
               />
@@ -227,31 +261,30 @@ const UploadForm = () => {
                 name="author"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-base font-semibold text-[#212a3b]">
-                      Author Name
+                    <FormLabel className="mb-2 text-sm font-medium tracking-[0.02em] text-[#EAE3D7]">
+                      Author
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="h-12 rounded-xl border-gray-200 bg-gray-50/50 px-4 text-base focus-visible:ring-2 focus-visible:ring-[#212a3b] transition-all"
-                        placeholder="ex: Robert Kiyosaki"
+                        className="h-14 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-base text-[#F8F3EA] placeholder:text-[#7F8A9D] shadow-none transition focus-visible:ring-0 focus-visible:border-[#D6B47A]/35"
+                        placeholder="Robert Kiyosaki"
                         {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-500 text-sm" />
+                    <FormMessage className="text-sm text-red-400" />
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* 5. Voice Selector */}
             <FormField
               control={form.control}
               name="persona"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base font-semibold text-[#212a3b]">
-                    Choose Assistant Voice
+                  <FormLabel className="mb-2 text-sm font-medium tracking-[0.02em] text-[#EAE3D7]">
+                    Assistant Voice
                   </FormLabel>
                   <FormControl>
                     <VoiceSelector
@@ -260,15 +293,14 @@ const UploadForm = () => {
                       disabled={isSubmitting}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-500 text-sm" />
+                  <FormMessage className="text-sm text-red-400" />
                 </FormItem>
               )}
             />
 
-            {/* 6. Submit Button */}
             <Button
               type="submit"
-              className="w-full h-14 text-lg font-semibold rounded-xl bg-[#212a3b] hover:bg-[#1a2130] text-white transition-all duration-200 shadow-md hover:shadow-lg mt-8"
+              className="h-14 w-full rounded-2xl border border-[#D6B47A]/20 bg-[linear-gradient(180deg,#F5EFE6_0%,#E9DCC7_100%)] text-base font-semibold text-[#0A0F1C] shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-[1.01] hover:brightness-[1.02]"
               disabled={isSubmitting}>
               Begin Synthesis
             </Button>

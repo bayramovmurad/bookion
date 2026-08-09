@@ -16,7 +16,7 @@ import { Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Library", href: "/" },
-  { label: "Add New", href: "/books/new" },
+  { label: "Add Book", href: "/books/new" },
   { label: "Pricing", href: "/subscriptions" },
 ];
 
@@ -25,26 +25,27 @@ const Navbar = () => {
   const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   return (
     <>
-      <header className="sticky top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="flex justify-between items-center">
-            {/* Logo */}
-            <Link href="/" className="flex items-center z-50">
-              <Image
-                src="/assets/logo.png"
-                alt="Bookio"
-                width={72}
-                height={26}
-                priority
-              />
+      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0A0F1C]/75 backdrop-blur-2xl">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-20 items-center justify-between">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="relative">
+                <Image
+                  src="/assets/logo.png"
+                  alt="Bookio"
+                  width={82}
+                  height={28}
+                  priority
+                  className="h-auto w-auto object-contain"
+                />
+              </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex gap-8 items-center">
+            <nav className="hidden md:flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-2 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.18)]">
               {navItems.map(({ label, href }) => {
                 const isActive =
                   pathName === href ||
@@ -52,96 +53,98 @@ const Navbar = () => {
 
                 return (
                   <Link
-                    href={href}
                     key={label}
+                    href={href}
                     className={cn(
-                      "font-semibold transition-all duration-200",
+                      "relative rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300",
                       isActive
-                        ? "text-[#212a3b] border-b-2 border-[#CCE5F2] pb-1"
-                        : "text-gray-500 hover:text-[#212a3b] hover:opacity-70",
+                        ? "bg-[#F5EFE6] text-[#0A0F1C] shadow-sm"
+                        : "text-[#9BA6B8] hover:text-[#F5EFE6] hover:bg-white/[0.04]",
+                    )}>
+                    {label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="hidden md:flex items-center gap-3">
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button className="rounded-full border border-[#D6B47A]/25 bg-[linear-gradient(180deg,rgba(214,180,122,0.20),rgba(214,180,122,0.10))] px-5 py-2.5 text-sm font-semibold text-[#F5EFE6] transition hover:border-[#D6B47A]/40 hover:bg-[linear-gradient(180deg,rgba(214,180,122,0.28),rgba(214,180,122,0.14))]">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
+
+              <SignedIn>
+                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[#F5EFE6]">
+                  <UserButton />
+                  <span className="pr-1 text-sm font-medium text-[#D7DDEA]">
+                    {user?.firstName}
+                  </span>
+                </div>
+              </SignedIn>
+            </div>
+
+            <button
+              className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-[#F5EFE6]"
+              onClick={toggleMenu}
+              aria-label="Toggle menu">
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            "md:hidden overflow-hidden transition-all duration-300",
+            isMobileMenuOpen
+              ? "max-h-[420px] opacity-100"
+              : "max-h-0 opacity-0",
+          )}>
+          <div className="border-t border-white/5 bg-[#0E1525]/95 px-4 pb-5 pt-4 backdrop-blur-2xl">
+            <div className="flex flex-col gap-2">
+              {navItems.map(({ label, href }) => {
+                const isActive =
+                  pathName === href ||
+                  (href !== "/" && pathName.startsWith(href));
+
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      "rounded-2xl px-4 py-3 text-sm font-medium transition",
+                      isActive
+                        ? "bg-[#F5EFE6] text-[#0A0F1C]"
+                        : "text-[#B7C0CF] hover:bg-white/[0.05] hover:text-white",
                     )}>
                     {label}
                   </Link>
                 );
               })}
 
-              {/* Desktop Auth */}
-              <div className="flex items-center ml-2">
+              <div className="mt-3 border-t border-white/5 pt-4">
                 <SignedOut>
                   <SignInButton mode="modal">
-                    <button className="font-semibold text-white bg-[#212a3b] px-4 py-2 rounded-xl hover:bg-[#1a2130] transition-colors">
+                    <button
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full rounded-2xl border border-[#D6B47A]/25 bg-[linear-gradient(180deg,rgba(214,180,122,0.20),rgba(214,180,122,0.10))] px-4 py-3 text-sm font-semibold text-[#F5EFE6]">
                       Sign In
                     </button>
                   </SignInButton>
                 </SignedOut>
+
                 <SignedIn>
-                  <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full">
+                  <div className="flex items-center gap-3 text-[#F5EFE6]">
                     <UserButton />
-                    <span className="font-medium text-sm text-[#212a3b] pr-1">
+                    <span className="text-sm font-medium">
                       {user?.firstName}
                     </span>
                   </div>
                 </SignedIn>
               </div>
-            </nav>
-
-            {/* Mobile Menu Toggle Button */}
-            <button
-              className="md:hidden p-2 text-[#212a3b] z-50 transition-transform active:scale-95"
-              onClick={toggleMenu}
-              aria-label="Toggle menu">
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Smooth Animated Mobile Navigation Dropdown */}
-        <div
-          className={cn(
-            "md:hidden absolute top-full left-0 w-full bg-white shadow-lg border-b border-gray-100 rounded-b-2xl overflow-hidden transition-all duration-300 ease-in-out",
-            isMobileMenuOpen
-              ? "max-h-[500px] opacity-100"
-              : "max-h-0 opacity-0 border-transparent",
-          )}>
-          <div className="py-4 px-4 flex flex-col gap-2">
-            {navItems.map(({ label, href }) => {
-              const isActive =
-                pathName === href ||
-                (href !== "/" && pathName.startsWith(href));
-
-              return (
-                <Link
-                  href={href}
-                  key={label}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "font-semibold block px-4 py-3 rounded-xl transition-colors",
-                    isActive
-                      ? "bg-[#CCE5F2]/20 text-[#212a3b]"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-[#212a3b]",
-                  )}>
-                  {label}
-                </Link>
-              );
-            })}
-
-            {/* Mobile Auth */}
-            <div className="flex items-center px-4 pt-4 pb-2 mt-2 border-t border-gray-100">
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full font-semibold text-white bg-[#212a3b] px-4 py-3 rounded-xl hover:bg-[#1a2130] transition-colors text-center">
-                    Sign In
-                  </button>
-                </SignInButton>
-              </SignedOut>
-              <SignedIn>
-                <div className="flex items-center gap-3 font-medium text-[#212a3b]">
-                  <UserButton />
-                  <span>{user?.firstName}</span>
-                </div>
-              </SignedIn>
             </div>
           </div>
         </div>

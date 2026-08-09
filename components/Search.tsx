@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Search as SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -16,7 +15,7 @@ const Search = () => {
     const delayDebounceFn = setTimeout(() => {
       const params = new URLSearchParams(window.location.search);
 
-      if (query) {
+      if (query.trim()) {
         params.set("query", query);
       } else {
         params.delete("query");
@@ -29,17 +28,22 @@ const Search = () => {
   }, [query, pathname, router]);
 
   return (
-    <div className="flex items-center w-full sm:max-w-sm md:max-w-md bg-gray-50/50 border border-gray-200 rounded-2xl shadow-sm transition-all focus-within:bg-white focus-within:border-[#212a3b] focus-within:ring-1 focus-within:ring-[#212a3b]">
-      <div className="pl-4 flex items-center justify-center">
-        <SearchIcon size={20} className="text-gray-400" />
+    <div className="group flex h-14 w-full items-center rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03))] px-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-all duration-300 focus-within:border-[#D6B47A]/35 focus-within:shadow-[0_10px_36px_rgba(0,0,0,0.24)] sm:max-w-md">
+      <div className="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] text-[#D6B47A]">
+        <SearchIcon size={18} />
       </div>
-      <Input
+
+      <input
         type="text"
-        placeholder="Search books by title or author"
-        className="flex-1 border-none shadow-none focus-visible:ring-0 bg-transparent px-3 h-12 text-base text-[#212a3b] placeholder:text-gray-400"
+        placeholder="Search by title, author, or mood"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className="h-full w-full bg-transparent text-sm text-[#F5EFE6] outline-none placeholder:text-[#7F8A9D]"
       />
+
+      <div className="hidden sm:flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[#7F8A9D]">
+        Search
+      </div>
     </div>
   );
 };
